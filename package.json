@@ -1,0 +1,24 @@
+{
+  "name": "component-mover",
+  "version": "1.0.0",
+  "description": "Move component based on TODO in code",
+  "main": "mover.js",
+  "dependencies": {
+    "find-in-files": "^0.5.0",
+    "fs-extra": "^9.1.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/DrBoria/component-mover.git"
+  },
+  "author": "DrBoria",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/DrBoria/component-mover/issues"
+  },
+  "homepage": "https://github.com/DrBoria/component-mover#readme"
+}
