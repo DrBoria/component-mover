@@ -9,7 +9,7 @@ function getCompFolderPath(compPath, compFolder) {
     .join("")}`; // join without comma
 }
 
-function move(path, folder, story) {
+function move(path, destination, story) {
   fs.readFile(path, "utf-8", function (err, data) {
     if (err) throw err;
 
@@ -19,12 +19,15 @@ function move(path, folder, story) {
     // Took exact content of styled-component
     const exportedComponent = data.match(searchValue);
 
-    // Remove component from provided folder
-    const newValue = data.replace(searchValue, "");
+    // Replace component from destination folder with import
+    const newValue = data.replace(
+      searchValue,
+      `import ${story.split(":")[1]} from '${destination.replace("src/", "")}';`
+    );
 
     // Move component to provided folder
-    const componentFolderPath = getCompFolderPath(path, folder);
-    fs.mkdirsSync(folder);
+    const componentFolderPath = getCompFolderPath(path, destination);
+    fs.mkdirsSync(destination);
     fs.writeFile(
       componentFolderPath,
       exportedComponent,
