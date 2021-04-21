@@ -9,20 +9,31 @@ function getCompFolderPath(compPath, compFolder) {
     .join("")}`; // join without comma
 }
 
-function move(path, destination, story) {
+// If you need you can add everything you want to import instead styled-components
+function replaceDeclarationWithExportDefault(exportedComponent) {
+  return exportedComponent[0]             // Took component
+    .match(new RegExp("=(.*)", "gms"))[0] // Took all data after declaration
+    .replace(                             // Add export default and styled components instead declaration
+      "=",
+      `
+    import styled from 'styled-components';
+    export default
+    `
+    ); 
+}
+
+function move(path, destination, story, fileExtension) {
   fs.readFile(path, "utf-8", function (err, data) {
     if (err) throw err;
 
     // Regular expression to get data from TODO till end of styled component (`;)
-    const searchValue = new RegExp(`(\/\/ TODO: ${story})(.*?)\`;`, "gms"); //gms;
+    const searchValue = new RegExp(`(\/\/ TODO: ${story})(.*?)\`;`, "gms");
 
     // Took exact content of styled-component
     const exportedComponent = data.match(searchValue);
 
-    // Replace component from destination folder with import
-    const newValue = data.replace(
-      searchValue,
-      `import ${story.split(":")[1]} from '${destination.replace("src/", "")}';`
+    const newExportedComponent = replaceDeclarationWithExportDefault(
+      exportedComponent
     );
 
     // Move component to provided folder
@@ -30,11 +41,21 @@ function move(path, destination, story) {
     fs.mkdirsSync(destination);
     fs.writeFile(
       componentFolderPath,
-      exportedComponent,
+      newExportedComponent,
       "utf-8",
       function (err) {
         if (err) throw err;
       }
+    );
+
+    // Replace component from destination folder with import
+    const newValue = data.replace(
+      searchValue,
+      `import ${story.split(":")[1]} from '${componentFolderPath
+        .replace("src/", "")
+        .replace(`.${fileExtension}`, "")}';
+        export {${story.split(":")[1]}};
+        `
     );
 
     // Remove todo with component
@@ -45,14 +66,24 @@ function move(path, destination, story) {
   });
 }
 
-function moveComponent(story, destination) {
+function moveComponent(
+  story,
+  destination,
+  fileExtension,
+  searchDirectory = "./src"
+) {
   findInFiles
-    .find(`// TODO: ${story}`, "./src", ".js$")
+    .find(`// TODO: ${story}`, searchDirectory, `.${fileExtension}$`)
     .then(function (results) {
       for (var result in results) {
-        move(result, destination, story);
+        move(result, destination, story, fileExtension);
       }
     });
 }
 
-moveComponent(process.argv[2], process.argv[3]);
+moveComponent(
+  process.argv[2],
+  process.argv[3],
+  process.argv[4],
+  process.argv[5]
+);
