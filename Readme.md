@@ -14,6 +14,13 @@ Move you component based on // TODO + story Id into folder you provide
 ## Example
 
 ```
-    node .\mover.js 'TFR-45:Button' 'src/components/Button'
+    node .\mover.js 'TFR-45:Button' 'src/components/Button' 'js'  
     Will move all Buttons into button component folder
 ```
+
+Arguments:
+
+1) ID + Component name
+2) Folder where should component be moved
+3) Files extension
+4) (optional) Search folder
